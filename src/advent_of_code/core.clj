@@ -51,9 +51,30 @@
   [input]
   (count (filter p2-part2-is-valid input)))
 
+(defn p3
+  [input]
+    (loop [res 0
+           input input
+           tree-hits 0]
+        (if (seq input)
+          (do
+              (let [this-row (first input)
+                    index (mod res (count this-row))
+                    this-char (nth this-row index)
+                    hit-tree (= this-char \#)]
+                (println (format "res: %s %s " index this-row))
+                (println (format "Character at this index %s" this-char))
+                (println (format "Hit tree? %s" hit-tree))
+                (println (format "Tree hits: %s" tree-hits))
+
+            (recur (+ 3 res) (rest input) (if hit-tree (inc tree-hits) tree-hits))))
+
+            res)))
+
 
 (defn -main
   [& args]
   ;(p1 (read-problem-input ("resources/p1-input.txt")))
   ;(println (format "P2 answer: %s" (p2 (read-problem-input "resources/p2-input.txt"))))
-  (println (format "P2-2 answer: %s" (p2-part2 (read-problem-input "resources/p2-input.txt")))))
+  ;(println (format "P2-2 answer: %s" (p2-part2 (read-problem-input "resources/p2-input.txt")))))
+  (println (format "P3 answer: %s" (p3 (read-problem-input "resources/p3-input.txt")))))
