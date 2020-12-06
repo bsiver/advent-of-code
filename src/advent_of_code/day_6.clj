@@ -22,7 +22,15 @@
         (let [group (filter not-empty group)]
           (count (distinct (reduce concat group))))))))
 
+(defn p6-part2
+  [input]
+  (reduce +
+          (let [groups (split-by #{""} input)]
+            (for [group groups]
+              (let [group (filter not-empty group)]
+                (count (apply clojure.set/intersection (map set group))))))))
+
 
 (defn -main
   [& args]
-  (println (p6 (util/read-problem-input "resources/p6-input.txt"))))
+  (println (p6-part2 (util/read-problem-input "resources/p6-input.txt"))))
