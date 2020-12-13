@@ -26,7 +26,28 @@
   [in]
   (frequencies (build-differences in)))
 
+(defn deltas
+  [in]
+  (->> in
+       (apply max)
+       (+ 3)
+       (conj in 0)
+       sort
+       (partition 2 1)
+       (mapv (fn [ [a b] ] (- b a)))))
+
+(def p2
+  (memoize
+    (fn
+      ([x] 1)
+      ([x y & xs]
+       (if (> (+ x y) 3)
+         (apply p2 y xs)
+         (+
+           (apply p2 y xs)
+           (apply p2 (+ x y) xs)))))))
 
 (defn -main
   [& args]
-  (p1 (map #(Integer/parseInt %) (util/read-problem-input "resources/p10-input.txt"))))
+  (p1 (map #(Integer/parseInt %) (util/read-problem-input "resources/p10-input.txt")))
+  (apply p2 (deltas (map #(Integer/parseInt %) (util/read-problem-input "resources/p10-input.txt")))))
