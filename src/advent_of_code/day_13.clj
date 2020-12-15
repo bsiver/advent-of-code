@@ -25,6 +25,46 @@
   (let [wait-times (sort-by :wait-time (wait-times input))]
     (* (:bus-id (first wait-times)) (:wait-time (first wait-times)))))
 
+(defn bus-map
+  [in]
+  (let [bus-ids (map #(Integer/parseInt %)
+                     (filter #(not= % "x")
+                             (-> (second in)
+                                 (clojure.string/split #","))))]
+    (println bus-ids)
+    (for [[i id] (map-indexed vector bus-ids)]
+        {:bus-id id
+         :index i})))
+
+(defn red
+  [in]
+  (fn [lst idx]
+    (if (= (in idx) "x")
+      lst
+      (let [val (Integer/parseInt (in idx))]
+        (cons (list (- val idx) val) lst)))))
+
+
+(defn make-list
+  [input]
+  (let [in (vec (cs/split (second input) #","))]
+    (reverse
+      (reduce (red in) [] (range (count in))))))
+
+ (defn solve
+   [pairs]
+   (let [modulo (apply * (map last pairs))]
+     (reduce (fn [total [x mx]]
+               (let [b (/ modulo mx)]
+                 (mod (+ total (* x b (mod (Math/pow b (- mx 2)) mx)))
+                      modulo)))
+             0 pairs)))
+
+ (defn p2
+  [in]
+  (solve (make-list in)))
+
 (defn -main
   [& args]
-  (p1 (util/read-problem-input "resources/p13-input.txt")))
+  ;(p1 (util/read-problem-input "resources/p13-input.txt"))
+  (p2 (util/read-problem-input "resources/p13-ex.txt")))
