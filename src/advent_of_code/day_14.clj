@@ -57,6 +57,26 @@
     (for [comb combinations]
       (reduce #(clojure.string/replace-first %1 "X" %2) bm comb))))
 
+(defn parse-group-2
+  [mask sequence]
+  (loop [i 0
+         memory {}]
+    (let [instruction (nth sequence i)
+          [_ mem-loc value] (parse-address instruction)
+          expanded-val (cs/split (to-padded-binary (Integer/parseInt mem-loc)) #"")
+          bitmasked (cs/join (apply-bitmask-p2 expanded-val mask))
+          addresses (vals-from-float bitmasked)
+          ; build a map of the permuted addresses as keys, val is the desired val to write
+          locations-to-write (apply merge (for [addr addresses] {addr (Integer/parseInt value)}))]
+      (cond (= i (dec (count sequence))) (merge memory locations-to-write)
+            :else (recur (inc i) (merge memory locations-to-write))))))
+
+(defn p2
+  [input]
+  (let [groups (util/split-by #(re-matches #"^mask.*" %) input)]
+    (apply merge
+           (for [group groups]
+             (parse-group-2 (parse-mask group) (rest group))))))
 
 
 (defn -main
