@@ -1,32 +1,28 @@
 (ns advent-of-code.day-15
   (:require [advent-of-code.util :as util]
-            [clojure.string :as cs]
-            [clojure.math.combinatorics :as c]))
+            [clojure.string :as cs]))
 
 (defn indexes-of-occurences
-  "Returns an array of indices of the occurences of number in spoken
+  "Returns a seq of indices of the occurrences of number in spoken
   (indexes-of-occurences [0 3 6 0 0 0 0] 0)
   => (0 3 4 5 6)"
   [spoken number]
-  (map first
-       (filter #(= (second %) number)
-               (map-indexed vector spoken))))
+  (sort (get spoken number)))
 
 (defn determine-v
   [spoken last-spoken]
-  (cond (= (get (frequencies spoken) last-spoken) 1) 0
-    (some #{last-spoken} spoken) (reduce - (reverse (take-last 2 (indexes-of-occurences spoken last-spoken))))
-        :else 0))
+  (cond (= (count (get spoken last-spoken)) 1) 0
+        :else (reduce - (reverse (take-last 2 (indexes-of-occurences spoken last-spoken))))))
 
 (defn p1
   [input]
   (loop [i 0
-         spoken []
+         spoken {}
          last-spoken (first input)]
     (let [v (cond (< i (count input)) (get input i)
                   :else (determine-v spoken last-spoken))]
-      (cond (= i 2019) (conj spoken v)
-            :else (recur (inc i) (conj spoken v) v)))))
+      (cond (= i 30000000) (assoc spoken v (conj (get spoken v) i))
+            :else (recur (inc i) (assoc spoken v (conj (get spoken v) i)) v)))))
 
 
 (defn -main
