@@ -59,6 +59,28 @@ def intersecting_points(line: (Point, Point)):
     print(f'line {line} intersects {intersections}')
     return intersections
 
+
+def intersecting_points_p2(line: (Point, Point)):
+    start_x = line[0].x
+    end_x = line[1].x
+    start_y = line[0].y
+    end_y = line[1].y
+    intersections = []
+
+    if start_x != end_x:
+        x_range = range(start_x, end_x + int((end_x - start_x) / abs(end_x - start_x)), int((end_x - start_x) / abs(end_x - start_x)))
+        for x in x_range:
+            y = (start_y - end_y) / (start_x - end_x) * (x - start_x) + start_y
+            intersections.append(Point(int(x), int(y)))
+    elif start_y != end_y:
+        y_range = range(start_y, end_y + int((end_y - start_y) / abs(end_y - start_y)), int((end_y - start_y) / abs(end_y - start_y)))
+        for y in y_range:
+            x = (start_x - end_x) / (start_y - end_y) * (y - start_y) + start_x
+            intersections.append(Point(int(x), int(y)))
+
+    return intersections
+
+
 def print_board(intersection_counts):
     for y in range(max_y + 1):
         print()
@@ -85,7 +107,7 @@ for line in lines:
 
 intersection_counts = {}
 for line in line_list:
-    ints = intersecting_points(line)
+    ints = intersecting_points_p2(line)
     for p in ints:
         if p in intersection_counts.keys():
             intersection_counts[p] += 1
